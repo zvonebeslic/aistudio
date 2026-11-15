@@ -17,7 +17,7 @@ test('Public HTML loads local assets and never points to root CSS/JS',async()=>{
   for(const name of pages){
     const text=await readFile(path.join(root,name),'utf8');
     assert.match(text,/<title>.*<\/title>/s,name);
-    const assets=[...text.matchAll(/(?:src|href)="(\.\/[^"#?]+)"/g)].map(match=>match[1]);
+    const assets=[...text.matchAll(/(?:src|href)="(\.\/[^"#?]+)(?:\?[^\"]*)?"/g)].map(match=>match[1]);
     assert.ok(assets.length>2,name+' has no assets');
     for(const asset of assets)await access(path.resolve(root,asset));
     assert.doesNotMatch(text,/(?:src|href)="\/(?:app|style|cloud|storage|tools|photo-editor|video-editor)/);
