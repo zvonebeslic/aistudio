@@ -13,10 +13,9 @@ const IMAGE_MODELS = [
   { id: 'gemini-3.1-flash-lite-image', label: '◈ Nano Banana 2 Lite · ekonomično', info: 'Google · brz i povoljniji model' },
   { id: 'gemini-3.1-flash-image', label: '✧ Nano Banana 2 · Flash', info: 'Google · univerzalan model za slike' },
   { id: 'gemini-3-pro-image', label: '◆ Nano Banana Pro · premium', info: 'Google · složeni dizajni i detalji' },
-  { id: 'gpt-image-2.5-sunburst', label: '✺ GPT Image 2.5 Sunburst', info: 'OpenAI · precizno uređivanje i kvalitetni vizuali' },
-  { id: 'gpt-image-2.5-flare', label: '✷ GPT Image 2.5 Flare', info: 'OpenAI · brze kvalitetne slike' }
+  { id: 'gemini-2.5-flash-image', label: '◐ Nano Banana · Classic', info: 'Google · brzi model za slike 1024px' }
 ];
-const VIDEO_MODELS = [{ id: 'gemini-omni-1.2-flash', label: '▷ Gemini Omni 1.2 Flash', info: 'Google · tekst, fotografija i video kao ulaz' }];
+const VIDEO_MODELS = [{ id: 'gemini-omni-1.1-flash', label: '▷ Gemini Omni 1.1 Flash', info: 'Google · tekst, fotografija i video kao ulaz' }];
 const PROMPTS = {
   image: [
     ['Fotorealistično', 'Fotorealistična filmska fotografija planinskog grebena tijekom zlatnog sata, detaljne teksture stijena, magla u dolini, 35mm objektiv'],
@@ -81,6 +80,10 @@ function setStatusChip(id, ready, yes, no) {
 async function loadStatus() {
   try {
     providerStatus = await requestJson('/api/status');
+    if (IS_PAGES_DEMO) {
+      providerStatus.providers.gemini = Boolean(window.StudioCloud?.hasKey());
+      providerStatus.galleryCount = (await StudioStore.list()).length;
+    }
     $('galleryBadge').textContent = providerStatus.galleryCount;
     setStatusChip('geminiStatus', providerStatus.providers.gemini, 'POVEZANO', 'POVEŽI NA SERVERU');
     setStatusChip('openaiStatus', providerStatus.providers.openai, 'POVEZANO', 'POVEŽI NA SERVERU');
@@ -119,7 +122,7 @@ function setMode(next) {
   if (!isVideo && ['16:9', '9:16'].includes($('ratioSelect').value) && next === 'image') $('ratioSelect').value = '1:1';
   renderSuggestions();
   renderRefs();
-  if (activeItem) renderResult(activeItem);
+  if (activeItem && activeItem.url) renderResult(activeItem);
 }
 function renderSuggestions() {
   $('promptSuggestions').innerHTML = '';
@@ -145,14 +148,14 @@ function showResultState(state) {
 function renderResult(item) {
   activeItem = item;
   showResultState('finishedResult');
-  const url = '/api/media/' + encodeURIComponent(item.id);
+  const url = IS_PAGES_DEMO ? item.url : '/api/media/' + encodeURIComponent(item.id);
   $('resultMedia').replaceChildren();
   const media = document.createElement(item.type === 'video' ? 'video' : 'img');
   media.src = url;
   if (item.type === 'video') { media.controls = true; media.playsInline = true; media.preload = 'metadata'; }
   else media.alt = item.prompt;
   $('resultMedia').append(media);
-  $('downloadResult').href = url + '/download';
+  $('downloadResult').href = IS_PAGES_DEMO ? url : url + '/download';
   $('downloadResult').download = 'ai-studio.' + item.ext;
   $('resultCaption').textContent = item.model + ' · ' + item.prompt;
   $('editResult').textContent = item.type === 'video' ? '◈ Uredi video' : '◈ Uredi';
@@ -171,7 +174,7 @@ function renderRefs() {
     const wrapper = document.createElement('div');
     wrapper.className = 'reference-item';
     const image = document.createElement('img');
-    image.src = '/api/media/' + encodeURIComponent(sourceId);
+    image.src = IS_PAGES_DEMO ? (gallery.find(x => x.id === sourceId)?.url || '') : '/api/media/' + encodeURIComponent(sourceId);
     image.alt = 'Slika iz galerije';
     const remove = document.createElement('button');
     remove.type = 'button'; remove.title = 'Ukloni referencu'; remove.textContent = '×';
@@ -251,10 +254,16 @@ async function useGalleryItem(id, targetMode) {
     if (targetMode !== 'video-edit') return;
     try {
       toast('Učitavam video iz galerije...');
-      const response = await fetch('/api/media/' + encodeURIComponent(id));
-      if (!response.ok) throw new Error('Video nije dostupan.');
-      const blob = await response.blob();
-      uploadedVideo = new File([blob], 'studio-' + id.slice(0, 8) + '.mp4', { type: item.mime });
+      let blob;
+      if (IS_PAGES_DEMO) {
+        blob = (await StudioStore.get(id))?.blob;
+        if (!blob) throw new Error('Video nije dostupan u lokalnoj galeriji.');
+      } else {
+        const response = await fetch('/api/media/' + encodeURIComponent(id));
+        if (!response.ok) throw new Error('Video nije dostupan.');
+        blob = await response.blob();
+      }
+      uploadedVideo = new File([blob], 'studio-' + id.slice(0, 8) + '.' + item.ext, { type: item.mime });
       $('videoUploadLabel').textContent = uploadedVideo.name;
       setMode('video-edit');
       toast('Video spreman za doradu.');
@@ -277,7 +286,9 @@ function renderGallery() {
   }
   grid.innerHTML = gallery.map(item => {
     const id = encodeURIComponent(item.id);
-    const url = '/api/media/' + id;
+    const url = IS_PAGES_DEMO ? item.url : '/api/media/' + id;
+    const downloadUrl = IS_PAGES_DEMO ? url : url + '/download';
+    const editorUrl = item.type === 'video' ? './video.html?id=' + id : './editor.html?id=' + id;
     const image = item.type === 'video'
       ? '<video src="' + url + '" preload="metadata" muted playsinline></video>'
       : '<img src="' + url + '" loading="lazy" alt="' + escapeHtml(item.prompt) + '">';
@@ -288,13 +299,19 @@ function renderGallery() {
     return '<article class="gallery-card"><div class="gallery-media">' + image + '</div><div class="gallery-card-body">' +
       '<p>' + escapeHtml(item.prompt.length > 95 ? item.prompt.slice(0, 95) + '…' : item.prompt) + '</p>' +
       '<div class="gallery-meta"><span>' + escapeHtml(item.model) + '</span><span>' + date + '</span></div>' +
-      '<div class="gallery-card-actions"><a href="' + url + '/download" download>↓ Preuzmi</a><button type="button" data-use="' + id + '" data-target="' + target + '">' + useLabel + '</button>' + animate + '</div></div></article>';
+      '<div class="gallery-card-actions"><a href="' + downloadUrl + '" download>↓ Preuzmi</a><a href="' + editorUrl + '">✎ Lokalni editor</a><button type="button" data-use="' + id + '" data-target="' + target + '">' + useLabel + '</button>' + animate +
+      (IS_PAGES_DEMO ? '<button type="button" data-delete="' + id + '">✕ Obriši</button>' : '') + '</div></div></article>';
   }).join('');
 }
 async function loadGallery() {
   try {
-    const data = await requestJson('/api/gallery');
-    gallery = data.items || [];
+    if (IS_PAGES_DEMO) {
+      const items = await StudioStore.list();
+      gallery = await Promise.all(items.map(async item => ({ ...item, url: await StudioStore.url(item.id) })));
+    } else {
+      const data = await requestJson('/api/gallery');
+      gallery = data.items || [];
+    }
     renderGallery();
     return gallery;
   } catch (error) { toast(error.message); return []; }
@@ -302,8 +319,42 @@ async function loadGallery() {
 async function submitGeneration(event) {
   if (event) event.preventDefault();
   if (IS_PAGES_DEMO) {
-    showError('Ovo je web-pregled na GitHub Pagesu. Sučelje, odabir prompta i pregled fotografija rade, ali stvarno generiranje zahtijeva Node.js hosting i API ključ. Upute su na GitHubu u README.md.');
-    toast('Za AI generiranje potrebno je povezati Node.js hosting.');
+    if (busy) return;
+    const prompt = $('promptInput').value.trim();
+    if (!prompt) return toast('Upiši što želiš generirati.');
+    if (mode === 'edit' && !uploads.length && !sourceId) return toast('Za prepravku dodaj fotografiju.');
+    if (mode === 'video-edit' && !uploadedVideo) return toast('Za AI prepravku dodaj video.');
+    if (!window.StudioCloud?.hasKey()) {
+      setMode('settings');
+      toast('Za AI generiranje unesi svoj Gemini API ključ u Postavkama.');
+      return;
+    }
+    busy = true;
+    $('generateBtn').disabled = true;
+    $('generateBtn').querySelector('strong').textContent = 'AI generira...';
+    $('progressTitle').textContent = mode.startsWith('video') ? 'Generiram video' : 'Generiram sliku';
+    $('progressNote').textContent = 'Šaljem podatke Gemini modelu...';
+    showResultState('progressResult');
+    try {
+      const item = await StudioCloud.generate({
+        mode, model: $('modelSelect').value, prompt,
+        ratio: $('ratioSelect').value,
+        resolution: $('resolutionSelect').value,
+        duration: $('durationSelect').value,
+        uploads: [...uploads], uploadedVideo, sourceId
+      }, note => { $('progressNote').textContent = note; });
+      renderResult(item);
+      await loadGallery();
+      toast('Gotovo! Rezultat je spremljen u lokalnu galeriju.');
+    } catch (error) {
+      showError(StudioCloud.failText(error));
+      toast('Generiranje nije uspjelo: ' + StudioCloud.failText(error));
+    } finally {
+      busy = false;
+      $('generateBtn').disabled = false;
+      $('generateBtn').querySelector('strong').textContent = MODES[mode].button;
+      await loadStatus();
+    }
     return;
   }
   if (busy) return;
@@ -388,9 +439,15 @@ function bindEvents() {
     if (activeItem) useGalleryItem(activeItem.id, activeItem.type === 'video' ? 'video-edit' : 'edit');
   });
   $('animateResult').addEventListener('click', () => { if (activeItem) useGalleryItem(activeItem.id, 'video'); });
-  $('galleryGrid').addEventListener('click', e => {
+  $('galleryGrid').addEventListener('click', async e => {
     const button = e.target.closest('button[data-use]');
-    if (button) useGalleryItem(button.dataset.use, button.dataset.target);
+    if (button) return useGalleryItem(button.dataset.use, button.dataset.target);
+    const remove = e.target.closest('button[data-delete]');
+    if (IS_PAGES_DEMO && remove && confirm('Trajno ukloniti ovaj rad iz lokalne galerije preglednika?')) {
+      await StudioStore.remove(remove.dataset.delete);
+      await loadGallery();
+      toast('Rad je uklonjen iz galerije.');
+    }
   });
 }
 bindEvents();
