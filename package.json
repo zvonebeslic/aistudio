@@ -11,7 +11,9 @@
     "start": "node server.mjs",
     "dev": "node --watch server.mjs",
     "check": "node --check server.mjs && node --check public/app.js && node --check docs/app.js && node --check docs/cloud.js && node --check docs/storage.js && node --check docs/photo-editor.js && node --check docs/video-editor.js",
-    "test": "node --test tests/smoke.mjs tests/static-pages.mjs"
+    "test": "node --test tests/smoke.mjs tests/static-pages.mjs tests/root-entry.mjs",
+    "sync:pages": "node scripts/sync-pages.mjs",
+    "check:pages": "node scripts/sync-pages.mjs --check"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
