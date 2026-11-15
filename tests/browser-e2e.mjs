@@ -4,7 +4,7 @@ import { join, extname, normalize } from 'node:path';
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 
-const ROOT=join(process.cwd(),'docs');
+const ROOT=process.cwd(); // Test the same root index.html that users edit, just like KvizToGo
 const TYPES={'.js':'application/javascript','.css':'text/css','.html':'text/html','.png':'image/png','.webp':'image/webp'};
 const server=createServer(async(req,res)=>{
   const relative=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
