@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b13">
+  <meta name="description" content="Tvoj privatni studio za AI fotografije i video.">
+  <title>Zvone AI Studio</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Glavna navigacija">
+      <a class="brand" href="/" aria-label="Zvone AI Studio">
+        <span class="brand-icon" aria-hidden="true">✦</span>
+        <span><strong>zvone<span class="brand-accent">studio</span></strong><small>AI CREATIVE WORKSPACE</small></span>
+      </a>
+      <div class="nav-heading">RADNI PROSTOR</div>
+      <nav id="navigation" class="navigation" aria-label="Odabir alata">
+        <button class="nav-link active" data-tab="image" type="button"><span class="nav-icon">✧</span> Generiranje slika <span class="nav-arrow">›</span></button>
+        <button class="nav-link" data-tab="edit" type="button"><span class="nav-icon">◈</span> Uredi fotografiju <span class="nav-arrow">›</span></button>
+        <button class="nav-link" data-tab="video" type="button"><span class="nav-icon">▷</span> Video studio <span class="nav-arrow">›</span></button>
+        <button class="nav-link" data-tab="video-edit" type="button"><span class="nav-icon">▤</span> Uredi video <span class="nav-arrow">›</span></button>
+      </nav>
+      <div class="nav-heading second-heading">MOJI RADOVI</div>
+      <nav class="navigation">
+        <button class="nav-link" data-tab="gallery" type="button"><span class="nav-icon">▦</span> Galerija <span id="galleryBadge" class="count-badge">0</span></button>
+        <button class="nav-link" data-tab="settings" type="button"><span class="nav-icon">⚙</span> Postavke</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-info"><span class="live-dot"></span><span>Privatni AI workspace</span></div>
+        <small>Sve kreacije na jednom mjestu.</small>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-sep">/</span><strong id="breadcrumb">Generiranje slika</strong></div>
+        <div class="topbar-right"><span class="topbar-pill"><i class="pulse"></i> AI STUDIO</span><span class="avatar">Z</span></div>
+      </header>
+
+      <div class="main-content">
+        <section id="studioPanel">
+          <div class="eyebrow"><span>✦</span> KREATIVNI LABORATORIJ <span class="eyebrow-line"></span> v1.0</div>
+          <div class="page-hero">
+            <div>
+              <h1 id="pageTitle">Tvoja ideja.<br><em>Nova stvarnost.</em></h1>
+              <p id="pageDescription">Opiši što zamišljaš, odaberi model i pretvori riječi u spektakularne vizuale.</p>
+            </div>
+            <div class="hero-art" aria-hidden="true"><div class="orb orb-one"></div><div class="orb orb-two"></div><div class="hero-symbol">✧</div></div>
+          </div>
+
+          <div class="editor-grid">
+            <form id="generatorForm" class="control-panel">
+              <div class="panel-header"><div><span class="section-number">01</span><h2>Postavke kreacije</h2></div><span class="mini-tag">STUDIO</span></div>
+              <div class="field">
+                <label for="modelSelect">AI MODEL</label>
+                <div class="select-wrap"><select id="modelSelect" name="model"></select><span aria-hidden="true">⌄</span></div>
+                <p id="modelHint" class="field-hint">Odaberi model za svoj projekt.</p>
+              </div>
+
+              <div id="imageUploadGroup" class="field reference-field">
+                <div class="field-line"><label for="imageUpload">REFERENTNE FOTOGRAFIJE</label><span id="referenceRequirement" class="optional">NEOBAVEZNO</span></div>
+                <label id="imageDrop" for="imageUpload" class="upload-drop">
+                  <input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+                  <span class="upload-icon">↥</span>
+                  <strong>Dodaj fotografiju</strong>
+                  <small>Dodirni ili povuci JPG, PNG ili WEBP • do 4 slike</small>
+                </label>
+                <div id="referenceList" class="reference-list" aria-live="polite"></div>
+              </div>
+
+              <div id="videoUploadGroup" class="field" hidden>
+                <label for="videoUpload">IZVORNI VIDEO</label>
+                <label class="upload-drop video-drop" for="videoUpload">
+                  <input id="videoUpload" type="file" accept="video/mp4,video/webm,video/quicktime">
+                  <span class="upload-icon">▷</span>
+                  <strong id="videoUploadLabel">Učitaj video za prepravku</strong>
+                  <small>MP4, WEBM ili MOV • do 60 MB</small>
+                </label>
+              </div>
+
+              <div class="field">
+                <div class="field-line"><label for="promptInput">TVOJ OPIS / PROMPT</label><span class="optional">BILO KOJI JEZIK</span></div>
+                <textarea id="promptInput" rows="5" maxlength="6000" placeholder="Opiši scenu, rasvjetu, kompoziciju, izgled i stil..."></textarea>
+                <div id="promptSuggestions" class="suggestions"></div>
+              </div>
+
+              <div class="settings-grid">
+                <div class="field"><label for="ratioSelect">FORMAT</label><div class="select-wrap"><select id="ratioSelect">
+                  <option value="1:1">1:1 · Kvadrat</option><option value="9:16">9:16 · Story</option>
+                  <option value="16:9">16:9 · Široko</option><option value="4:3">4:3 · Klasično</option>
+                  <option value="3:4">3:4 · Portret</option><option value="3:2">3:2 · Foto</option><option value="2:3">2:3 · Uspravno</option>
+                </select><span aria-hidden="true">⌄</span></div></div>
+                <div id="resolutionGroup" class="field"><label for="resolutionSelect">REZOLUCIJA</label><div class="select-wrap"><select id="resolutionSelect">
+                  <option value="1K">1K · Standard</option><option value="2K">2K · Visoka</option><option value="4K">4K · Ultra</option>
+                </select><span aria-hidden="true">⌄</span></div></div>
+                <div id="durationGroup" class="field" hidden><label for="durationSelect">TRAJANJE</label><div class="select-wrap"><select id="durationSelect">
+                  <option value="5">5 sekundi</option><option value="8" selected>8 sekundi</option><option value="10">10 sekundi</option><option value="15">15 sekundi</option>
+                </select><span aria-hidden="true">⌄</span></div></div>
+              </div>
+
+              <button id="generateBtn" class="create-btn" type="submit"><span>✦</span><strong>Generiraj sliku</strong><span class="create-arrow">↗</span></button>
+              <p class="cost-note">Generiranje koristi tvoj API račun. Mogu nastati troškovi prema cjeniku odabranog modela.</p>
+            </form>
+
+            <section class="result-panel" aria-label="Pregled rezultata">
+              <div class="panel-header result-head"><div><span class="section-number">02</span><h2>Pregled rezultata</h2></div><span id="resultStatus" class="status-tag">SPREMNO</span></div>
+              <div id="resultStage" class="result-stage">
+                <div id="emptyResult" class="empty-result">
+                  <div class="empty-illustration"><div class="empty-ring ring-outer"></div><div class="empty-ring ring-inner"></div><span>✧</span></div>
+                  <h3>Tvoje platno čeka.</h3><p>Slike i videozapisi koje stvoriš pojavit će se ovdje.</p>
+                  <span class="ghost-label">IMAGINE • CREATE • REFINE</span>
+                </div>
+                <div id="progressResult" class="progress-result" hidden>
+                  <div class="spinner-orbit">✦</div>
+                  <h3 id="progressTitle">Kreiranje je u tijeku</h3>
+                  <p id="progressNote">Pokretanje modela...</p>
+                  <div class="progress-track"><span></span></div>
+                  <small>Video može trajati dulje od slike. Ne zatvaraj stranicu dok radiš na zadatku.</small>
+                </div>
+                <div id="finishedResult" class="finished-result" hidden>
+                  <div id="resultMedia" class="result-media"></div>
+                  <div class="result-actions">
+                    <a id="downloadResult" class="small-action primary-action" href="#" download>↓ Preuzmi</a>
+                    <button id="editResult" class="small-action" type="button">◈ Uredi</button>
+                    <button id="animateResult" class="small-action" type="button">▷ Animiraj</button>
+                  </div>
+                  <p id="resultCaption" class="result-caption"></p>
+                </div>
+                <div id="errorResult" class="error-result" hidden><span>!</span><h3>Nešto nije uspjelo</h3><p id="errorText"></p><button id="retryBtn" type="button">Pokušaj ponovno</button></div>
+              </div>
+              <div class="result-footer"><span>✦ AI POWERED CREATION</span><span id="resultFooterRight">READY TO CREATE</span></div>
+            </section>
+          </div>
+
+          <div class="bottom-note"><span>✦</span> Generiraj, doradi i animiraj. Tvoj kreativni proces, tvoja pravila.</div>
+        </section>
+
+        <section id="galleryPanel" hidden>
+          <div class="eyebrow">✦ TVOJA ZBIRKA</div>
+          <div class="section-title-row"><div><h1>Galerija <em>radova.</em></h1><p>Svaka ideja koju si pretvorio u sliku ili video, na jednom mjestu.</p></div><button id="refreshGallery" class="secondary-button" type="button">↻ Osvježi</button></div>
+          <div id="galleryGrid" class="gallery-grid"></div>
+        </section>
+
+        <section id="settingsPanel" hidden>
+          <div class="eyebrow">✦ KONFIGURACIJA</div>
+          <div class="section-title-row"><div><h1>Postavke <em>studija.</em></h1><p>Povezani modeli, sigurnost i podaci.</p></div></div>
+          <div class="settings-cards">
+            <div class="settings-card"><div class="settings-card-top"><div><span class="provider-icon">◈</span><h2>Google Gemini</h2></div><span id="geminiStatus" class="config-chip">PROVJERA</span></div><p>Nano Banana 2.1, Nano Banana Pro i Gemini Omni za video.</p><code>GEMINI_API_KEY</code></div>
+            <div class="settings-card"><div class="settings-card-top"><div><span class="provider-icon">✧</span><h2>OpenAI Images</h2></div><span id="openaiStatus" class="config-chip">PROVJERA</span></div><p>GPT Image 2.5 Sunburst i Flare za slike i prepravke.</p><code>OPENAI_API_KEY</code></div>
+            <div class="settings-card"><div class="settings-card-top"><div><span class="provider-icon">🔒</span><h2>Privatnost</h2></div><span id="passwordStatus" class="config-chip">PROVJERA</span></div><p>Postavi lozinku na serveru. API ključevi ostaju na serveru, nikad u pregledniku.</p><code>STUDIO_PASSWORD</code></div>
+          </div>
+          <div class="help-panel"><h2>Kako pokrenuti AI Studio?</h2><p>Ovo je Node.js aplikacija, ne samo GitHub Pages stranica. Za generiranje trebaš hosting koji pokreće Node.js, najmanje jedan API ključ i trajnu mapu za galeriju.</p><p>Upute su u datoteci <strong>README.md</strong> na GitHubu. Nikada ne upisuj ključeve u kod ili javni repozitorij.</p></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
