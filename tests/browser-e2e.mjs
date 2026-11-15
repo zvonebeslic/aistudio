@@ -106,8 +106,46 @@ try{
     throw Error('Video export did not complete: '+await page.locator('#message').textContent());
   }
   assert.equal(await page.locator('#downloadResult').isVisible(),true);
+  // Stub Google at the HTTP boundary. This verifies the complete user flow
+  // without pretending that an external provider/account was paid or enabled.
+  await page.route('https://generativelanguage.googleapis.com/**',async route=>{
+    const method=route.request().method();
+    if(method==='OPTIONS'){
+      await route.fulfill({status:204,headers:{
+        'access-control-allow-origin':'*',
+        'access-control-allow-methods':'GET,POST,OPTIONS',
+        'access-control-allow-headers':'content-type,x-goog-api-key'
+      }});
+      return;
+    }
+    const isVideo=route.request().postData()?.includes('gemini-omni-1.2-flash');
+    await route.fulfill({status:200,contentType:'application/json',
+      headers:{'access-control-allow-origin':'*'},
+      body:JSON.stringify({
+        id:'mockinteraction123',status:'completed',
+        ...(isVideo ? {output_video:{data:videoBase64,mime_type:'video/webm'}}
+          : {output_image:{data:buffer.toString('base64'),mime_type:'image/png'}})
+      })});
+  });
+  await page.goto(base+'/',{waitUntil:'load'});
+  await page.locator('[data-tab="settings"]').click();
+  await page.locator('#geminiBrowserKey').fill('AIza-test-key-only-for-browser-smoke-12345678');
+  await page.locator('#connectGemini').click();
+  assert.match(await page.locator('#geminiBrowserStatus').textContent(),/Ključ je aktivan/);
+  await page.locator('[data-tab="image"]').click();
+  await page.locator('#promptInput').fill('Planina u zalasku sunca, široki kadar');
+  await page.locator('#generateBtn').click();
+  await page.locator('#finishedResult').waitFor({state:'visible',timeout:12000});
+  await page.locator('[data-tab="gallery"]').click();
+  assert.ok(await page.locator('.gallery-card').count()>=2);
+  await page.locator('[data-tab="video"]').click();
+  await page.locator('#promptInput').fill('Planinski pejzaž snimljen dronom');
+  await page.locator('#generateBtn').click();
+  await page.locator('#finishedResult video').waitFor({state:'visible',timeout:12000});
+  await page.locator('[data-tab="gallery"]').click();
+  assert.ok(await page.locator('.gallery-card').count()>=3);
   assert.deepEqual(errors,[],'Browser runtime errors');
-  console.log('PASS: home, modes, AI settings, photo upload, rotate, effect, export, gallery restore, video upload & export.');
+  console.log('PASS: home, modes, photo editor, video editor, gallery and mocked AI image/video generation UI.');
 }finally{
   if(browser)await browser.close();
   await new Promise(resolve=>server.close(resolve));
