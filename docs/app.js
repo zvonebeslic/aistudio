@@ -15,7 +15,7 @@ const IMAGE_MODELS = [
   { id: 'gemini-3-pro-image', label: '◆ Nano Banana Pro · premium', info: 'Google · složeni dizajni i detalji' },
   { id: 'gemini-2.5-flash-image', label: '◐ Nano Banana · Classic', info: 'Google · brzi model za slike 1024px' }
 ];
-const VIDEO_MODELS = [{ id: 'gemini-omni-1.1-flash', label: '▷ Gemini Omni 1.1 Flash', info: 'Google · tekst, fotografija i video kao ulaz' }];
+const VIDEO_MODELS = [{ id: 'gemini-omni-1.2-flash', label: '▷ Gemini Omni 1.2 Flash', info: 'Google · tekst, fotografija i video kao ulaz' }];
 const PROMPTS = {
   image: [
     ['Fotorealistično', 'Fotorealistična filmska fotografija planinskog grebena tijekom zlatnog sata, detaljne teksture stijena, magla u dolini, 35mm objektiv'],
