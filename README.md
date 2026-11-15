@@ -1,5 +1,15 @@
 # ✦ Zvone AI Studio
 
+## Otvori web
+
+**Web stranica:** https://zvonebeslic.github.io/aistudio/
+
+**Glavni web-kod je u samom korijenu repozitorija**, kao kod KvizToGo i Mountain Adventures: `index.html`, `editor.html`, `video.html`, `style.css`, `app.js` itd.
+
+**Kako se objavljuje:** GitHub Pages u ovom repozitoriju već je postavljen na `main/docs`. Zato automatski workflow `.github/workflows/sync-pages.yml` kopira HTML/CSS/JS iz korijena u `docs/` nakon svakog ažuriranja glavnih web-datoteka. Korijen je izvorni kod koji uređuješ, a `docs/` objavljena kopija.
+
+**Za buduće izmjene:** uređuj `index.html` i ostale datoteke u korijenu. Nemoj ručno uređivati kopije u `docs/`, jer će ih sinkronizacija zamijeniti.
+
 **Tvoj vlastiti AI studio s javnim izvornim kodom i stvarnim alatima za obradu fotografija i videa.**
 
 - **🌐 Web aplikacija:** https://zvonebeslic.github.io/aistudio/
@@ -47,17 +57,18 @@
 
 ```
 aistudio/
-├── docs/                 # GitHub Pages web aplikacija
-│   ├── index.html        # AI generiranje, galerija, postavke
-│   ├── app.js            # radni prostor i prikaz
-│   ├── cloud.js          # Gemini API, osobni ključ za sesiju
-│   ├── storage.js        # IndexedDB lokalna galerija
-│   ├── editor.html       # izvorni foto editor
-│   ├── photo-editor.js   # Canvas 2D obrada fotografije
-│   ├── video.html        # izvorni video editor
-│   ├── video-editor.js   # trim, efekti i MediaRecorder izvoz
-│   ├── style.css
-│   └── tools.css
+├── index.html            # GLAVNA web-stranica (kao na KvizToGo!)
+├── editor.html           # uređivanje fotografija
+├── video.html            # montaža videa
+├── app.js                # funkcije početne stranice, AI i galerija
+├── style.css             # dizajn početne stranice
+├── tools.css             # dizajn editora
+├── cloud.js              # Google Gemini API integracija
+├── storage.js            # lokalna galerija IndexedDB
+├── photo-editor.js       # Canvas obrada fotografija
+├── video-editor.js       # HTML5 obrada videa
+├── docs/                 # automatski objavljena identična kopija za Pages
+├── scripts/sync-pages.mjs # sinkronizacija root -> docs
 ├── public/               # ranije Node.js sučelje za backend
 ├── server.mjs            # Express server za sigurniju API integraciju
 ├── tests/
@@ -101,7 +112,16 @@ npm run check
 npm test
 ```
 
-Kod i HTML/CSS/JS za Pages objavljuju se iz direktorija `docs/`. Repozitorij koristi automatizirane provjere kroz GitHub Actions.
+Glavni HTML/CSS/JavaScript nalazi se u **korijenu repozitorija**. GitHub Pages trenutačno objavljuje automatski preslikan direktorij `docs/`. Provjere i objave rade preko GitHub Actions.
+
+Za ručno usklađivanje ili provjeru kopije:
+
+```bash
+npm run sync:pages
+npm run check:pages
+```
+
+Za **lokalni pregled bez backenda** otvori projekt pomoću bilo kojeg statičkog HTTP poslužitelja, primjerice `python3 -m http.server 8080`, pa posjeti `http://localhost:8080/`.
 
 ## Službena dokumentacija
 
