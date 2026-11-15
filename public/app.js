@@ -15,7 +15,7 @@ const IMAGE_MODELS = [
   { id: 'gpt-image-2.5-sunburst', label: '✺ GPT Image 2.5 Sunburst', info: 'OpenAI · precizno uređivanje i kvalitetni vizuali' },
   { id: 'gpt-image-2.5-flare', label: '✷ GPT Image 2.5 Flare', info: 'OpenAI · brze kvalitetne slike' }
 ];
-const VIDEO_MODELS = [{ id: 'gemini-omni-1.1-flash', label: '▷ Gemini Omni 1.1 Flash', info: 'Google · tekst, fotografija i video kao ulaz' }];
+const VIDEO_MODELS = [{ id: 'gemini-omni-1.2-flash', label: '▷ Gemini Omni 1.2 Flash', info: 'Google · tekst, fotografija i video kao ulaz' }];
 const PROMPTS = {
   image: [
     ['Fotorealistično', 'Fotorealistična filmska fotografija planinskog grebena tijekom zlatnog sata, detaljne teksture stijena, magla u dolini, 35mm objektiv'],
