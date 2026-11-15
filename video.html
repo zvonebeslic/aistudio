@@ -1,0 +1,27 @@
+<!doctype html><html lang="hr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b13"><title>Video editor • Zvone AI Studio</title><link rel="stylesheet" href="./style.css?v=20261115r2"><link rel="stylesheet" href="./tools.css?v=20261115r2"><script src="./storage.js?v=20261115r2" defer></script><script src="./video-editor.js?v=20261115r2" defer></script></head>
+<body class="editor-body">
+<header class="tool-header"><a class="tool-brand" href="./"><span>✦</span> zvone<strong>studio</strong></a><nav><a href="./">AI Studio</a><a href="./editor.html">Foto editor</a><a class="selected" href="./video.html">Video editor</a></nav><span class="tool-badge">RADI LOKALNO</span></header>
+<main class="tool-main"><div class="tool-topline"><div><p class="tool-kicker">✦ VLASTITI ALATI / VIDEO</p><h1>Video <em>editor.</em></h1><p>Skrati snimku, uspori, promijeni boje, dodaj tekst i izvezi uređeni video izravno iz preglednika.</p></div><span class="tool-note">Bez uploada na server</span></div>
+<div class="tool-columns"><section class="tool-controls">
+<div class="tool-card"><h2><span>01</span> Učitaj video</h2><label id="drop" class="tool-drop"><input id="file" type="file" accept="video/mp4,video/webm,video/quicktime"><b>▷ Odaberi videozapis</b><small>MP4, WEBM ili MOV • preporuka do 100 MB</small></label><p class="tool-hint" id="fileName">Nema učitanog videa.</p></div>
+<div class="tool-card"><h2><span>02</span> Vremenska crta</h2><div class="tool-fields-two"><div class="tool-field"><label for="clipStart">Početak (sekunde)</label><input id="clipStart" type="number" min="0" step="0.1" value="0"></div><div class="tool-field"><label for="clipEnd">Kraj (sekunde)</label><input id="clipEnd" type="number" min="0" step="0.1" value="0"></div></div>
+<div class="tool-field"><label for="speed">Brzina reprodukcije <output id="speedValue">1×</output></label><input id="speed" type="range" min="0.5" max="2" step="0.25" value="1"></div>
+<div class="tool-inline"><button id="jumpStart" class="tool-secondary">↤ Na početak isječka</button><button id="togglePlay" class="tool-secondary">▷ Reproduciraj</button></div><p class="tool-hint" id="durationLabel">Trajanje: nije učitano.</p></div>
+<div class="tool-card"><h2><span>03</span> Izgled i natpisi</h2>
+<div class="tool-field range-field"><label for="brightness">Svjetlina <output id="brightnessValue">100%</output></label><input id="brightness" type="range" min="0" max="200" value="100"></div>
+<div class="tool-field range-field"><label for="contrast">Kontrast <output id="contrastValue">100%</output></label><input id="contrast" type="range" min="0" max="200" value="100"></div>
+<div class="tool-field range-field"><label for="saturate">Boje <output id="saturateValue">100%</output></label><input id="saturate" type="range" min="0" max="200" value="100"></div>
+<div class="tool-field"><label class="tool-check"><input id="grayscale" type="checkbox"> Crno-bijeli video</label></div>
+<div class="tool-field"><label for="overlayText">Tekst preko videa</label><input id="overlayText" type="text" maxlength="110" placeholder="Npr. MOJA AVANTURA"></div>
+<div class="tool-fields-two"><div class="tool-field"><label for="textColor">Boja teksta</label><input id="textColor" type="color" value="#ffffff"></div><div class="tool-field"><label for="textPos">Položaj teksta</label><select id="textPos"><option value="bottom">Dolje</option><option value="center">Sredina</option><option value="top">Gore</option></select></div></div></div>
+<div class="tool-card"><h2><span>04</span> Izvoz</h2>
+<div class="tool-field"><label for="exportWidth">Izlazna rezolucija</label><select id="exportWidth"><option value="720">720p (brže)</option><option value="1080">1080p (kvalitetnije)</option><option value="480">480p (manji video)</option></select></div>
+<button id="export" class="tool-primary wide-button">↓ Izvezi video</button><button id="save" class="tool-secondary wide-button" disabled>▦ Spremi zadnji izvoz u galeriju</button>
+<p class="tool-hint">Izvoz koristi MediaRecorder preglednika. Podržani format (WebM ili MP4) ovisi o mobitelu i pregledniku. Audio se nastoji sačuvati kada ga preglednik podržava.</p></div>
+</section>
+<section class="tool-workspace"><div class="workspace-title"><span>▷ VIDEO PREVIEW</span><span id="mediaInfo">SPREMNO</span></div>
+<div class="video-stage" id="videoStage"><div id="emptyVideo" class="stage-placeholder"><div>▷</div><h3>Učitaj snimku za obradu</h3><p>Pregled vremenske crte, filtera i teksta bit će ovdje.</p></div><div id="videoWrapper" class="video-wrapper" hidden><video id="video" playsinline controls preload="metadata"></video><span id="videoTextOverlay" class="video-text-overlay"></span></div></div>
+<div class="tool-progress" id="progressBox" hidden><div class="tool-progress-line"><span></span></div><p id="progressText">Obrada videa je u tijeku...</p></div>
+<p id="message" class="workspace-foot">Video uređuješ lokalno. Za izvoz moraš zadržati otvorenu stranicu i omogućiti reprodukciju videa.</p>
+<div class="export-result" id="exportResult" hidden><h3>✦ Video je spreman</h3><video id="resultVideo" playsinline controls></video><a id="downloadResult" class="tool-primary" href="#" download>↓ Preuzmi gotov video</a></div>
+</section></div></main></body></html>
