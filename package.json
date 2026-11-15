@@ -4,11 +4,14 @@
   "private": true,
   "type": "module",
   "description": "Osobni AI studio za slike i video",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node server.mjs",
     "dev": "node --watch server.mjs",
-    "check": "node --check server.mjs && node --check public/app.js"
+    "check": "node --check server.mjs && node --check public/app.js",
+    "test": "node --test tests/smoke.mjs"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
