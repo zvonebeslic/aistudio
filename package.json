@@ -1,0 +1,18 @@
+{
+  "name": "zvone-ai-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Osobni AI studio za slike i video",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "check": "node --check server.mjs && node --check public/app.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "multer": "^2.0.2"
+  }
+}
