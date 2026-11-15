@@ -6,7 +6,7 @@
   'use strict';
   const API='https://generativelanguage.googleapis.com';
   const IMAGE=new Set(['gemini-nano-banana-2.1','gemini-3.1-flash-image','gemini-3.1-flash-lite-image','gemini-3-pro-image','gemini-2.5-flash-image']);
-  const VIDEO='gemini-omni-1.1-flash';
+  const VIDEO='gemini-omni-1.2-flash';
   let apiKey='';
   function hasKey(){return Boolean(apiKey);}
   function setKey(key){
@@ -145,7 +145,7 @@
       model,
       input:input.length===1?prompt:input,
       ...(isVideo ? {
-        response_format:{type:'video',aspect_ratio:ratio==='9:16'?'9:16':'16:9',duration:Math.min(10,Number(duration)||8)+'s',delivery:'uri'}
+        response_format:{type:'video',aspect_ratio:ratio==='9:16'?'9:16':'16:9',duration:Math.min(15,Number(duration)||8)+'s',delivery:'uri'}
       } : {
         response_format:{type:'image',aspect_ratio:ratio,image_size:resolution||'1K'}
       })
