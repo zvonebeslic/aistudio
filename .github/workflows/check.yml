@@ -20,5 +20,7 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Validate syntax
         run: npm run check
+      - name: Prepare published copy from root website
+        run: npm run sync:pages
       - name: Smoke test
         run: npm test
