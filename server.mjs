@@ -16,7 +16,7 @@ const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
 const STUDIO_PASSWORD = process.env.STUDIO_PASSWORD || '';
 const GEMINI_ORIGIN = 'https://generativelanguage.googleapis.com';
 const IMAGE_MODELS = new Set(['gemini-nano-banana-2.1', 'gemini-3.1-flash-lite-image', 'gemini-3.1-flash-image', 'gemini-3-pro-image', 'gpt-image-2.5-sunburst', 'gpt-image-2.5-flare']);
-const VIDEO_MODEL = 'gemini-omni-1.1-flash';
+const VIDEO_MODEL = 'gemini-omni-1.2-flash';
 
 if (process.env.NODE_ENV === 'production' && !STUDIO_PASSWORD) {
   throw new Error('U produkciji postavi STUDIO_PASSWORD. Aplikacija je zaštićena lozinkom.');
@@ -105,7 +105,7 @@ function parseRequest(req) {
   if (!prompt || prompt.length > 6000) throw new Error('Opis mora sadržavati 1 do 6000 znakova.');
   if (!['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3'].includes(ratio)) throw new Error('Neispravan format slike.');
   if (!['1K', '2K', '4K'].includes(resolution)) throw new Error('Neispravna rezolucija.');
-  if (!Number.isInteger(duration) || duration < 3 || duration > 10) throw new Error('Video mora trajati 3 do 10 sekundi.');
+  if (!Number.isInteger(duration) || duration < 3 || duration > 15) throw new Error('Video mora trajati 3 do 15 sekundi.');
   if (mode === 'image' || mode === 'edit') {
     if (!IMAGE_MODELS.has(model)) throw new Error('Nepodržani model za slike.');
     if (model.startsWith('gemini-') && !GEMINI_KEY) throw new Error('Nije postavljen GEMINI_API_KEY.');
