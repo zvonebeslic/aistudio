@@ -51,6 +51,7 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
             echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Request a fresh GitHub Pages build
         if: steps.sync_commit.outputs.changed == 'true'
         env:
