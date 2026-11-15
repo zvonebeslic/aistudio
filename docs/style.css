@@ -34,3 +34,11 @@
 .key-link{display:inline-block;margin-top:12px;font-size:11px;color:#cfb5ff;font-weight:700}
 .key-link:hover{text-decoration:underline}
 @media(max-width:730px){.topbar-connect{padding:7px 9px;font-size:10px}.key-connection{flex-direction:column;align-items:stretch}.key-connection input{width:100%;min-height:43px}.key-connection .small-action{width:100%}}
+
+.instant-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:16px;padding:15px 16px;margin:0 0 15px;border:1px solid #4e4367;background:linear-gradient(110deg,#261d3a,#172334)}
+.instant-tools>div{display:flex;flex:1 1 230px;flex-direction:column;gap:4px}.instant-tools strong{font-size:14px;color:#fff}.instant-tools small{font-size:10px;line-height:1.5;color:#a6a6c4}
+.instant-kicker{font-weight:850;color:#82e5c8;font-size:9px;letter-spacing:1px}
+.instant-action{display:flex;align-items:center;justify-content:center;gap:9px;border-radius:10px;border:1px solid #705a9b;color:#f5eaff;background:#4b3871;padding:13px 12px;font-size:11px;font-weight:780;white-space:nowrap}
+.instant-action:hover{filter:brightness(1.13);transform:translateY(-1px)}
+.instant-action span{font-size:16px}.instant-action b{font-size:16px;font-weight:400}.instant-video{background:#24445c;border-color:#4e748e}
+@media(max-width:720px){.instant-tools{padding:13px;gap:9px}.instant-tools>div{flex:1 0 100%;margin-bottom:4px}.instant-action{flex:1 1 130px;font-size:10px;padding:11px 8px}}
