@@ -2,7 +2,11 @@
 
 Vlastiti **AI kreativni studio** s tamnim responzivnim sučeljem, generiranjem slika, prepravkama fotografija, izradom videa iz opisa ili fotografije, uređivanjem videa i osobnom galerijom.
 
+**🌐 GitHub Pages web-pregled:** https://zvonebeslic.github.io/aistudio/
+
 **GitHub:** https://github.com/zvonebeslic/aistudio
+
+> Interaktivni web-pregled objavljen je iz mape `docs/`. Na GitHub Pagesu možeš isprobati izbornike, modele, promptove i pregled učitanih datoteka; za stvarno AI generiranje treba Node.js backend.
 
 ## Što radi
 
