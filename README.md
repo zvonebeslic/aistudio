@@ -1,93 +1,111 @@
 # ✦ Zvone AI Studio
 
-Vlastiti **AI kreativni studio** s tamnim responzivnim sučeljem, generiranjem slika, prepravkama fotografija, izradom videa iz opisa ili fotografije, uređivanjem videa i osobnom galerijom.
+**Tvoj vlastiti AI studio s javnim izvornim kodom i stvarnim alatima za obradu fotografija i videa.**
 
-**🌐 GitHub Pages web-pregled:** https://zvonebeslic.github.io/aistudio/
+- **🌐 Web aplikacija:** https://zvonebeslic.github.io/aistudio/
+- **📸 Foto editor:** https://zvonebeslic.github.io/aistudio/editor.html
+- **🎬 Video editor:** https://zvonebeslic.github.io/aistudio/video.html
+- **📂 Izvorni kod:** https://github.com/zvonebeslic/aistudio
 
-**GitHub:** https://github.com/zvonebeslic/aistudio
+## Što radi na GitHub Pagesu, odmah i bez ključa
 
-> Interaktivni web-pregled objavljen je iz mape `docs/`. Na GitHub Pagesu možeš isprobati izbornike, modele, promptove i pregled učitanih datoteka; za stvarno AI generiranje treba Node.js backend.
+| Funkcija | Status |
+| --- | --- |
+| Učitaj i uredi JPG, PNG, WEBP, AVIF fotografiju | ✅ Lokalno |
+| Izreži (1:1, 9:16, 16:9, 4:3…), rotiraj, zrcali | ✅ Lokalno |
+| Svjetlina, kontrast, zasićenje, ton, sepia, crno-bijelo, blur | ✅ Lokalno |
+| Dodaj tekst i crtaj prstom/mišem | ✅ Lokalno |
+| Poništi/vrati, izvezi PNG/JPG/WEBP | ✅ Lokalno |
+| Učitaj video, skraćivanje, brzina, boje, natpisi | ✅ Lokalno |
+| Izvezi video preko MediaRecodera | ✅ Na podržanim preglednicima |
+| Galerija s pregledom, brisanjem, uređivanjem i preuzimanjem | ✅ Lokalni IndexedDB |
+| AI generiranje i prepravke slika uz Gemini | ✅ Nakon osobnog API ključa i omogućena Google API pristupa |
+| AI tekst/slika → video, video → video | ✅ Pokušaj preko Gemini Omni, ovisi o modelu, regiji i API pristupu |
 
-## Što radi
+### Osobno AI generiranje izravno na Pagesu
 
-- **Generiraj slike** iz opisa preko modela Google Nano Banana 2.1 / Lite / 2 / Pro ili OpenAI GPT Image 2.5 Sunburst / Flare.
-- **Uredi fotografije:** dodaj do četiri referentne slike ili učitaj prethodno generirani rad iz galerije, napiši promjenu i generiraj novu verziju.
-- **Video studio:** Gemini Omni 1.2 Flash generira video s audiozapisom iz teksta ili reference. Odabir 5, 8, 10 ili 15 sekundi, vertikalno ili horizontalno.
-- **Uredi video:** učitaj MP4, WEBM ili MOV i opiši izmjene (Gemini Omni; dostupnost određuje Google model).
-- **Galerija:** lokalno spremljeni radovi, ponovno uređivanje, animiranje fotografija, preuzimanje PNG/JPG/WEBP/MP4 izlaza.
-- **Privatnost:** HTTP Basic lozinka štiti cijeli studio. API ključevi ostaju isključivo na backendu. Nijedan pravi ključ ne smije se commitati.
+1. Otvori https://aistudio.google.com/apikey i izradi **vlastiti** Gemini API ključ.
+2. Otvori web aplikaciju, klikni **Poveži AI** → **Postavke**.
+3. Unesi ključ i odaberi **Poveži Gemini**.
+4. Vrati se na **Generiranje slika**, **AI prepravka fotografije**, **Video studio** ili **AI prepravka videa**.
+5. Odaberi model (Nano Banana 2.1 / 2 Lite / Pro / Classic ili Gemini Omni 1.1 Flash), napiši prompt i generiraj.
+6. Rezultat možeš preuzeti i spremit će se u **Galeriju** preglednika.
 
-> Ovo je *vlastita aplikacija koja poziva AI modele preko službenih API-ja*, a ne lokalno trenirani ili neograničeni model. Kvaliteta, dozvoljene radnje, dostupnost i cijena ovise o odabranom pružatelju usluga. Odgovori modela mogu biti odbijeni prema pravilima pružatelja.
+⚠️ **Sigurnost:** Google preporučuje backend proxy za produkcijsku upotrebu. Ovaj pristup, *Bring Your Own Key*, služi **samo osobnom korištenju**: svoj ključ ručno upisuješ u preglednik i on se šalje Google API-ju. Ne sprema se u `localStorage`, `IndexedDB`, GitHub kod niti cookie; zadržava se samo u memoriji trenutačne kartice. Ipak, preglednički alati i skripte na toj stranici mogu mu pristupiti. **Nemoj koristiti glavni produkcijski ključ bez ograničenja.** Ako aplikaciju namjeravaš ponuditi javnim korisnicima, koristi backend i tajne varijable. Postavi ograničenja i upozorenja za potrošnju na Google računu.
 
-## Lokalni start
+**API model i cijena:** generiranje nije neograničeno ni besplatno. Potrebne su kvote i API pristup za odabrane modele. Google može odbiti zahtjeve zbog sadržaja, regije, kvote, neispravnih parametara ili pristupa računu. Ako preglednik blokira CORS ili upload videa, koristi Node.js backend.
 
-Treba **Node.js 20+** i npm.
+### Lokalna privatnost i galerija
+
+- Fotografije i videi uređeni u lokalnim editorima **ne šalju se na naš server**.
+- **Kad koristiš AI**, promptovi i reference namjerno se šalju odabranom AI pružatelju usluge.
+- Galerija se čuva u **IndexedDB-u istog preglednika i uređaja**. Nije sinkronizirana s drugim mobitelima/računalima, a brisanje podataka preglednika može obrisati galeriju.
+- Redovito preuzimaj važne radove.
+- Video izvoz ovisi o `MediaRecorder`, `canvas.captureStream()`, dekoderu i dozvolama preglednika. Izlaz je WebM ili MP4 prema podršci. Zvuk se dodaje kada je audio obrada podržana. Za velike ili profesionalne montaže koristi namjenski desktop editor.
+
+## Struktura projekta
+
+```
+aistudio/
+├── docs/                 # GitHub Pages web aplikacija
+│   ├── index.html        # AI generiranje, galerija, postavke
+│   ├── app.js            # radni prostor i prikaz
+│   ├── cloud.js          # Gemini API, osobni ključ za sesiju
+│   ├── storage.js        # IndexedDB lokalna galerija
+│   ├── editor.html       # izvorni foto editor
+│   ├── photo-editor.js   # Canvas 2D obrada fotografije
+│   ├── video.html        # izvorni video editor
+│   ├── video-editor.js   # trim, efekti i MediaRecorder izvoz
+│   ├── style.css
+│   └── tools.css
+├── public/               # ranije Node.js sučelje za backend
+├── server.mjs            # Express server za sigurniju API integraciju
+├── tests/
+└── package.json
+```
+
+Sve datoteke urednika napisane su za ovaj projekt i mogu se mijenjati, nadograđivati ili prenositi na drugi hosting. API modeli i sadržaj tih modela ne postaju tvoje vlasništvo samo zato što ih koristiš u aplikaciji.
+
+## Node.js backend (produkcijska opcija)
+
+**Za sigurnije postavljanje s tajnim API ključevima** potreban je Node.js 20+ hosting (Hostinger VPS, Railway, Render...).
 
 ```bash
 git clone https://github.com/zvonebeslic/aistudio.git
 cd aistudio
 npm install
 cp .env.example .env
-# u datoteci .env popuni STUDIO_PASSWORD i API ključeve
+# postavi lozinku i jedan ili više API ključeva u .env
 npm start
 ```
 
-Otvori **http://localhost:3000**. Preglednik će, ako je STUDIO_PASSWORD zadan, tražiti korisnika i lozinku: korisničko ime može biti bilo što, lozinka je vrijednost `STUDIO_PASSWORD`.
-
-Primjer konfiguracije (`.env` nemoj objavljivati):
-
+Primjer server konfiguracije:
 ```dotenv
 PORT=3000
-STUDIO_PASSWORD=ovdje-duga-jedinstvena-lozinka
-GEMINI_API_KEY=ovdje-gemini-kljuc
-OPENAI_API_KEY=ovdje-openai-kljuc
+STUDIO_PASSWORD=stavi-dugu-jedinstvenu-lozinku
+GEMINI_API_KEY=tvoj-gemini-api-kljuc
+OPENAI_API_KEY=tvoj-openai-api-kljuc
 DATA_DIR=./data
+NODE_ENV=production
 ```
 
-Dovoljan je **jedan** od AI ključeva za odgovarajuće modele. Za video je potreban **GEMINI_API_KEY**.
+Express backend iz mape `public/` koristi API ključeve samo na serveru, sprema medije u `DATA_DIR` i traži Basic prijavu. Za internetski rad obavezni su HTTPS i trajni disk. **GitHub Pages ne može izvršavati Express backend.**
 
-API ključeve možeš izraditi na:
-- Google AI Studio: https://aistudio.google.com/apikey
-- OpenAI Platform: https://platform.openai.com/api-keys
+Ovaj projekt trenutačno nije zamjena za profesionalni DaVinci Resolve (višeslojna montaža, color management, audio mixing) niti za kompletnu Higgsfield infrastrukturu (vlastiti GPU klasteri, modeli i video render farma). Sadrži stvarne alate i mogućnost korištenja kompatibilnih vanjskih AI modela.
 
-Napomena: API promet se može posebno naplaćivati, neovisno o pretplati na ChatGPT. Uređivanje slika te video možda zahtijevaju naplatu na povezanim računima.
+## Provjere
 
-## Online postavljanje
+```bash
+npm install
+npm run check
+npm test
+```
 
-**GitHub Pages nije dovoljan.** Backend poziva API-je i skriva ključeve. Primjeri podržanog pristupa:
+Kod i HTML/CSS/JS za Pages objavljuju se iz direktorija `docs/`. Repozitorij koristi automatizirane provjere kroz GitHub Actions.
 
-1. Postavi repozitorij na Node.js hosting poput Railwayja, Rendera, Hostinger VPS-a ili vlastitog poslužitelja.
-2. Podesi naredbu `npm install` za build i `npm start` za start.
-3. U postavkama hostinga dodaj **`STUDIO_PASSWORD`**, **`GEMINI_API_KEY`** i/ili **`OPENAI_API_KEY`**, `NODE_ENV=production`.
-4. Obavezno koristi **HTTPS** za prijenos Basic lozinke, i **persistent volume** za direktorij određen varijablom `DATA_DIR`. Bez trajnog diska galerija će nestati pri ponovnom pokretanju ili redeployu.
-5. Otvori adresu aplikacije i prijavi se. U **Postavke** provjeri statuse spojenih pružatelja usluga.
+## Službena dokumentacija
 
-Za Hostinger dijeljeni hosting provjeri podršku za Node.js i dugotrajne HTTP zahtjeve. VPS je najpredvidljiviji izbor. U ovoj verziji video-zadaci žive u memoriji Node procesa, stoga restart servera prekida generiranje u tijeku.
-
-## Sigurnosne napomene
-
-- `.env`, `data/` i `node_modules/` ignoriraju se u Gitu.
-- Studio je namijenjen **jednom korisniku / osobnoj uporabi**. Za javnu višekorisničku uslugu potrebna je zasebna autentifikacija, kvote po korisniku, baza i zaštita od zlouporabe.
-- Ne uploadaj tuđe fotografije ili videe bez odgovarajućih prava.
-- Generator može odbiti neke zahtjeve u skladu s pravilima Googlea ili OpenAI-ja.
-- Maksimalno četiri slike do 12 MB po slici; video do 60 MB; najviše 12 zahtjeva u 10 minuta po IP-u.
-- Galerija se sprema na disk (`DATA_DIR/media` i `DATA_DIR/gallery.json`). Napravi vlastite sigurnosne kopije ako su radovi važni.
-
-## API rute
-
-| Ruta | Svrha |
-| --- | --- |
-| `GET /api/status` | status konfiguracije bez izlaganja ključeva |
-| `POST /api/generate` | kreiraj AI zadatak (multipart/form-data) |
-| `GET /api/jobs/:id` | provjera napretka |
-| `GET /api/gallery` | metapodaci spremljenih radova |
-| `GET /api/media/:id` | pregled medija |
-| `GET /api/media/:id/download` | preuzimanje medija |
-
-## Službena dokumentacija modela
-
-- Google Nano Banana: https://aistudio.google.com/docs/image-generation
-- Google Omni Flash: https://aistudio.google.com/docs/omni
-- OpenAI slike: https://developers.openai.com/api/docs/guides/image-generation
-
-**Status verzije:** Početna funkcionalna integracija i sučelje. Bez vlastitih API ključeva nije moguće provesti stvarno generiranje ili potvrditi računsku dostupnost modela. Za videoprodukciju u većem opsegu preporučuje se vanjski red zadataka i pohrana u objektni storage.
+- Gemini Image: https://ai.google.dev/gemini-api/docs/image-generation
+- Gemini Omni: https://ai.google.dev/gemini-api/docs/omni
+- Gemini API key security: https://ai.google.dev/gemini-api/docs/api-key
+- GitHub Pages: https://docs.github.com/en/pages
